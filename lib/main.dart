@@ -10,15 +10,18 @@ Future<void> main() async {
 
   const accessToken = String.fromEnvironment('ACCESS_TOKEN');
   const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
-  const supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
+  const supabasePublishableKey = String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY');
 
   if (accessToken.isNotEmpty) {
     MapboxOptions.setAccessToken(accessToken);
   }
 
   SupabasePulseRepository? repository;
-  if (supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty) {
-    await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
+  if (supabaseUrl.isNotEmpty && supabasePublishableKey.isNotEmpty) {
+    await Supabase.initialize(
+      url: supabaseUrl,
+      publishableKey: supabasePublishableKey,
+    );
     final client = Supabase.instance.client;
     if (client.auth.currentSession == null) {
       await client.auth.signInAnonymously();
