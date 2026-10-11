@@ -20,6 +20,9 @@ create index if not exists posts_geo_idx on public.posts using gist (
 
 alter table public.posts enable row level security;
 
+grant select on public.posts to authenticated;
+revoke insert, update, delete on public.posts from anon, authenticated;
+
 create policy "read active unexpired posts"
 on public.posts
 for select
@@ -65,7 +68,7 @@ begin
     raise exception 'invalid coordinates';
   end if;
 
-  -- Store only an obfuscated point, 300-700m away from the submitted GPS point.
+  -- Persist only an obfuscated point, 300-700m from the submitted GPS point.
   v_distance_m := 300 + random() * 400;
   v_bearing := random() * 2 * pi();
   v_lat_rad := radians(p_latitude);
@@ -125,7 +128,7 @@ as $$
   limit 200;
 $$;
 
+revoke execute on function public.create_anonymous_post(text, double precision, double precision) from public, anon;
+revoke execute on function public.get_nearby_posts(double precision, double precision, double precision) from public, anon;
 grant execute on function public.create_anonymous_post(text, double precision, double precision) to authenticated;
 grant execute on function public.get_nearby_posts(double precision, double precision, double precision) to authenticated;
-
-revoke insert, update, delete on public.posts from anon, authenticated;
