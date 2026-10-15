@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 
 import 'features/map/data/sample_pulse_repository.dart';
+import 'features/map/domain/pulse_repository.dart';
 import 'features/map/presentation/map_page.dart';
 import 'services/location_service.dart';
 
 class PulseApp extends StatelessWidget {
-  const PulseApp({required this.mapboxAccessToken, super.key});
+  const PulseApp({
+    required this.mapboxAccessToken,
+    this.repository,
+    super.key,
+  });
 
   final String mapboxAccessToken;
+  final PulseRepository? repository;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +40,7 @@ class PulseApp extends StatelessWidget {
       ),
       home: MapPage(
         hasMapboxAccessToken: mapboxAccessToken.isNotEmpty,
-        repository: SamplePulseRepository(),
+        repository: repository ?? SamplePulseRepository(),
         locationService: LocationService(),
       ),
     );
